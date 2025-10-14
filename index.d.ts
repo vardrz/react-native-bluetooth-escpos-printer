@@ -3,7 +3,7 @@ export interface PrintOptions {
   left?: number;
   autoCut?: boolean;
   center?: boolean;
-  paperSize?: 58 | 80;
+  paperSize?: number;
 }
 
 export interface BluetoothDevice {
