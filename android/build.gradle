@@ -20,12 +20,13 @@ buildscript {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "28.0.3"
+    namespace "cn.jystudio.bluetooth"
+    
+    compileSdkVersion 35
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 30
+        minSdkVersion 24
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
     }

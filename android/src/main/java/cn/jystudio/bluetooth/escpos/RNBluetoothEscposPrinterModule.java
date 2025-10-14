@@ -137,12 +137,14 @@ public class RNBluetoothEscposPrinterModule extends ReactContextBaseJavaModule
             int widthTimes = 0;
             int heigthTimes=0;
             int fonttype=0;
+            boolean cut = false;
             if(options!=null) {
                 encoding = options.hasKey("encoding") ? options.getString("encoding") : "GBK";
                 codepage = options.hasKey("codepage") ? options.getInt("codepage") : 0;
                 widthTimes = options.hasKey("widthtimes") ? options.getInt("widthtimes") : 0;
                 heigthTimes = options.hasKey("heigthtimes") ? options.getInt("heigthtimes") : 0;
                 fonttype = options.hasKey("fonttype") ? options.getInt("fonttype") : 0;
+                cut = options.hasKey("cut") && options.getBoolean("cut");
             }
             String toPrint = text;
 //            if ("UTF-8".equalsIgnoreCase(encoding)) {
@@ -151,7 +153,14 @@ public class RNBluetoothEscposPrinterModule extends ReactContextBaseJavaModule
 //            }
 
             byte[] bytes = PrinterCommand.POS_Print_Text(toPrint, encoding, codepage, widthTimes, heigthTimes, fonttype);
-            if (sendDataByte(bytes)) {
+            boolean sent = sendDataByte(bytes);
+
+            if (sent && cut) {
+                sendDataByte(PrinterCommand.POS_Set_PrtAndFeedPaper(30));
+                sendDataByte(PrinterCommand.POS_Set_Cut(1));
+            }
+
+            if (sent) {
                 promise.resolve(null);
             } else {
                 promise.reject("COMMAND_NOT_SEND");
@@ -319,19 +328,38 @@ public class RNBluetoothEscposPrinterModule extends ReactContextBaseJavaModule
     public void printPic(String base64encodeStr, @Nullable  ReadableMap options) {
         int width = 0;
         int leftPadding = 0;
+        boolean autoCut = true;
+        boolean center = true;
+        int paperSize = 58;
+        int paperWidthDots = WIDTH_58;
+
         if(options!=null){
             width = options.hasKey("width") ? options.getInt("width") : 0;
             leftPadding = options.hasKey("left")?options.getInt("left") : 0;
+            autoCut = options.hasKey("autoCut") ? options.getBoolean("autoCut") : true;
+            center = options.hasKey("center") ? options.getBoolean("center") : true;
+            paperSize = options.hasKey("paperSize") ? options.getInt("paperSize") : 58;
         }
 
-        //cannot larger then devicesWith;
-        if(width > deviceWidth || width == 0){
-            width = deviceWidth;
+        if (paperSize == 80) {
+            paperWidthDots = WIDTH_80; // 80mm = 576 dots
+        } else {
+            paperWidthDots = WIDTH_58; // 58mm = 384 dots
+        }
+
+        if (width > paperWidthDots || width == 0) {
+            width = paperWidthDots;
+        }
+
+        if (center) {
+            leftPadding = (paperWidthDots - width) / 2;
+            if (leftPadding < 0) leftPadding = 0;
         }
 
         byte[] bytes = Base64.decode(base64encodeStr, Base64.DEFAULT);
         Bitmap mBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         int nMode = 0;
+
         if (mBitmap != null) {
             /**
              * Parameters:
@@ -343,10 +371,12 @@ public class RNBluetoothEscposPrinterModule extends ReactContextBaseJavaModule
             byte[] data = PrintPicture.POS_PrintBMP(mBitmap, width, nMode, leftPadding);
             //  SendDataByte(buffer);
             sendDataByte(Command.ESC_Init);
-            sendDataByte(Command.LF);
+            // sendDataByte(Command.LF);
             sendDataByte(data);
             sendDataByte(PrinterCommand.POS_Set_PrtAndFeedPaper(30));
-            sendDataByte(PrinterCommand.POS_Set_Cut(1));
+            if (autoCut) {
+                sendDataByte(PrinterCommand.POS_Set_Cut(1));
+            }
             sendDataByte(PrinterCommand.POS_Set_PrtInit());
         }
     }

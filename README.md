@@ -2,8 +2,15 @@
 
 ## Acknowledgments
 
-This project is based on the original work by [Janus J K Lu](https://github.com/januslo/react-native-bluetooth-escpos-printer).  
-Special thanks to Janus for the initial creation of this project, without which this fork wouldn't be possible.
+This project is a continuation of the excellent work started by  
+[Janus J K Lu](https://github.com/januslo/react-native-bluetooth-escpos-printer),  
+and later improved by [Ccdilan](https://github.com/ccdilan/react-native-bluetooth-escpos-printer).  
+
+This fork by [Farid Fatkhurrozak (Vardrz)](https://github.com/vardrz/react-native-bluetooth-escpos-printer)  
+builds upon Ccdilan’s version, adding TypeScript support, print optimizations, and minor native fixes.
+
+Special thanks to both Janus and Ccdilan — their contributions laid the foundation  
+for this version to exist and continue evolving.
 
 ---
 
