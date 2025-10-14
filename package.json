@@ -5,6 +5,8 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
+    "build": "echo 'No build needed — pure JS project'",
+    "prepare": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
