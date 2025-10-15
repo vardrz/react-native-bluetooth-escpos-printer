@@ -1,7 +1,7 @@
 {
   "name": "@vardrz/react-native-bluetooth-escpos-printer",
   "version": "0.1.0",
-  "description": "Custom fork of @ccdilan/react-native-bluetooth-escpos-printer with additional fixes and print improvements.",
+  "description": "Forked react-native-bluetooth-escpos-printer with additional print improvements and TypeScript support.",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
